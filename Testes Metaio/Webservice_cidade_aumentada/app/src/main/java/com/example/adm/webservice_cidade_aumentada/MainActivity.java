@@ -28,6 +28,7 @@ public class MainActivity extends ActionBarActivity {
     TextView txt_long;
     TextView txt_lat;
     int index = 0;
+    JSONArray j;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +38,30 @@ public class MainActivity extends ActionBarActivity {
         txt_titulo = (TextView)findViewById(R.id.txt_titulo);
         txt_lat = (TextView)findViewById(R.id.txt_lat);
         txt_long = (TextView)findViewById(R.id.txt_long);
+        new GET().execute("http://cidadeaumentada.esy.es/scriptcase/app/blank_ws_json/blank_ws_json.php?lon=-46&lat=-23&intervalo=5");
     }
 
 
-  public void proximo (View v){
+  public void proximo (View v) throws JSONException {
 
-      new GET().execute("http://cidadeaumentada.esy.es/scriptcase/app/blank_ws_json/blank_ws_json.php?lon=-46&lat=-23&intervalo=5");
       index++;
+      JSONObject json = new JSONObject();
+      if(index >= j.length()){
+          index = 0;
+      }
+      json = j.getJSONObject(index);
+      String str = null;
+      str = json.getString("conteudo_titulo");
+      txt_titulo.setText(str);
+
+      str = json.getString("conteudo_id");
+      txt_id.setText(str);
+
+      str = json.getString("latitude");
+      txt_lat.setText(str);
+
+      str = json.getString("longitude");
+      txt_long.setText(str);
 
   }
     private class GET extends AsyncTask<String,Void ,String > {
@@ -82,65 +100,13 @@ public class MainActivity extends ActionBarActivity {
 
 
             try {
-                JSONArray j = new JSONArray(s);
-                JSONObject json = new JSONObject();
-                if(index >= j.length()){
-                    index = 0;
-                }
-                json = j.getJSONObject(index);
-                String str = null;
-                str = json.getString("conteudo_titulo");
-                txt_titulo.setText(str);
+                j = new JSONArray(s);
 
-                str = json.getString("conteudo_id");
-                txt_id.setText(str);
-
-                str = json.getString("latitude");
-                txt_lat.setText(str);
-
-                str = json.getString("longitude");
-                txt_long.setText(str);
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            /*JSONObject o = null;
-            try {
-                o = new JSONObject(s);
-                String cota_bovespa;
-                String varia_bovespa;
-                String cota_dolar;
-                String varia_dolar;
-                String cota_euro;
-                String varia_euro;
-                String data;
-
-                cota_bovespa = (String)o.getJSONObject("bovespa").get("cotacao");
-                txt_cota_bovespa.setText(cota_bovespa);
-                varia_bovespa = (String)o.getJSONObject("bovespa").get("variacao");
-                txt_varia_bovespa.setText(varia_bovespa);
-
-                cota_dolar = (String)o.getJSONObject("dolar").get("cotacao");
-                txt_cota_dolar.setText(cota_dolar);
-                varia_dolar = (String)o.getJSONObject("dolar").get("variacao");
-                txt_varia_dolar.setText(varia_dolar);
-
-                cota_euro = (String)o.getJSONObject("euro").get("cotacao");
-                txt_cota_euro.setText(cota_euro);
-                varia_euro = (String)o.getJSONObject("euro").get("variacao");
-                txt_varia_euro.setText(varia_euro);
-
-                data = o.getString("atualizacao");
-                txt_atual.setText(data);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-
-
-*/
         }
     }
 
